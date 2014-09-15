@@ -1,7 +1,12 @@
-#include <QtWebSockets/QtWebSockets>
+#include <QCoreApplication>
+#include <httpserver.h>
+
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication a(argc, argv);
 
-    return 0;
+    HttpServer server;
+
+    return a.exec();
 }

@@ -8,13 +8,22 @@ QT       += core
 
 QT       -= gui
 
-QT += websockets
+QT += network
 
 TARGET = TechServer
 CONFIG   += console
 CONFIG   -= app_bundle
+CONFIG -= x86_64
 
 TEMPLATE = app
 
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    httpserver.cpp \
+    httpclient.cpp \
+    message.cpp
+
+HEADERS += \
+    httpserver.h \
+    httpclient.h \
+    message.h

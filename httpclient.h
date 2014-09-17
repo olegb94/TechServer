@@ -12,9 +12,6 @@ class HttpClient : public QObject
 private:
     QTcpSocket *socket;
     Message *message;
-    QString header;
-    quint64 pos;
-    QString body;
     virtual ~HttpClient();
 public:
     explicit HttpClient(QTcpSocket *socket, QObject *parent = 0);

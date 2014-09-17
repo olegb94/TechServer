@@ -3,7 +3,6 @@
 HttpClient::HttpClient(QTcpSocket *socket, QObject *parent) :
     QObject(parent), socket(socket)
 {
-    //this->socket = socket;
     connect(socket, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
     connect(socket, SIGNAL(bytesWritten(qint64)), this, SLOT(onBytesWritten()));
     connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(onError()));
@@ -19,19 +18,24 @@ HttpClient::~HttpClient()
 
 void HttpClient::onBytesWritten()
 {
-    socket->write("Content-Length: 2\r\n");
-    socket->write("\r\n");
-    socket->write("lol");
+    if (!message->endOfMessage()) {
+        QByteArray a = message->getNextBlock(19);
+        socket->write(a);
+        qDebug() << a;
+    }
+    else
+        deleteLater();
 }
 
 void HttpClient::onReadyRead()
 {
     while(socket->isReadable() && !socket->atEnd())
         qDebug() << socket->readAll();
-    socket->write("HTTP/1.1 200 OK\r\n");
-    socket->write("Date: Thu, 19 Feb 2009 12:27:04 GMT\r\n");
-    socket->write("Content-Type: text/html; charset=windows-1251\r\n");
-
+    message = new Message();
+    if (!message->endOfMessage()) {
+        QByteArray a = message->getNextBlock(10);
+        socket->write(a);
+    }
 }
 
 void HttpClient::onError()

@@ -5,6 +5,8 @@
 #include <message.h>
 #include <QString>
 #include <QTcpSocket>
+#include <serverlogic.h>
+
 
 class HttpClient : public QObject
 {
@@ -12,9 +14,10 @@ class HttpClient : public QObject
 private:
     QTcpSocket *socket;
     Message *message;
+    ServerLogic *logic;
     virtual ~HttpClient();
 public:
-    explicit HttpClient(QTcpSocket *socket, QObject *parent = 0);
+    explicit HttpClient(QTcpSocket *socket, ServerLogic *logic, QObject *parent = 0);
 signals:
 public slots:
     void onBytesWritten();

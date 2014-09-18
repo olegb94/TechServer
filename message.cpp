@@ -63,7 +63,7 @@ void Message::formMessage()
         header.append("Content-Type: ").append(contentType).append("\r\n");
     }
     header.append("\r\n");
-    qDebug() << header;
+    //qDebug() << header;
 }
 
 bool Message::setCode(quint16 code)

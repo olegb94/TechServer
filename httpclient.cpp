@@ -1,7 +1,8 @@
 #include "httpclient.h"
+#include <QBuffer>
 
-HttpClient::HttpClient(QTcpSocket *socket, QObject *parent) :
-    QObject(parent), socket(socket)
+HttpClient::HttpClient(QTcpSocket *socket, ServerLogic *logic, QObject *parent) :
+    QObject(parent), socket(socket), logic(logic)
 {
     connect(socket, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
     connect(socket, SIGNAL(bytesWritten(qint64)), this, SLOT(onBytesWritten()));
@@ -13,33 +14,40 @@ HttpClient::~HttpClient()
 {
     delete socket;
     delete message;
-    qDebug() << "Socket killed\n";
+    //qDebug() << "Socket killed\n";
 }
 
 void HttpClient::onBytesWritten()
 {
     if (!message->endOfMessage()) {
-        QByteArray a = message->getNextBlock(19);
+        QByteArray a = message->getNextBlock(100);
         socket->write(a);
-        qDebug() << a;
-    }
-    else
+        //qDebug() << a;
+    } else {
+        socket->close();
         deleteLater();
+    }
 }
 
 void HttpClient::onReadyRead()
 {
-    while(socket->isReadable() && !socket->atEnd())
-        qDebug() << socket->readAll();
-    message = new Message();
+    QByteArray *request = new QByteArray();
+    QBuffer buffer(request);
+    buffer.open(QIODevice::ReadWrite);
+    while (socket->isReadable() && !socket->atEnd()) {
+        //qDebug() << socket->readAll();
+       buffer.write(socket->readAll());
+    }
+    message = logic->handleRequest(request);
     if (!message->endOfMessage()) {
-        QByteArray a = message->getNextBlock(10);
+        QByteArray a = message->getNextBlock(100);
         socket->write(a);
     }
 }
 
 void HttpClient::onError()
 {
+    qDebug() << "Error";
     this->deleteLater();
 }
 

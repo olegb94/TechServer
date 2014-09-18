@@ -21,9 +21,14 @@ TEMPLATE = app
 SOURCES += main.cpp \
     httpserver.cpp \
     httpclient.cpp \
-    message.cpp
+    message.cpp \
+    serverlogic.cpp
 
 HEADERS += \
     httpserver.h \
     httpclient.h \
-    message.h
+    message.h \
+    serverlogic.h
+
+OTHER_FILES += \
+    test.html

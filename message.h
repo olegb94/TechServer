@@ -2,7 +2,6 @@
 #define MESSAGE_H
 #include <QDateTime>
 
-
 class Message
 {
 public:

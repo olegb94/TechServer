@@ -14,7 +14,7 @@ private:
 public slots:
     void onNewConnection();
 public:
-    explicit HttpServer(QObject *parent = 0);
+    HttpServer(int port, QString document_root);
 };
 
 #endif // TCPSERVER_H

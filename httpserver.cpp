@@ -1,15 +1,14 @@
 #include "httpserver.h"
 #include "httpclient.h"
 #include <QCoreApplication>
-#define DOCUMENT_ROOT "/Users/oleg/www/"
 
-HttpServer::HttpServer(QObject *parent): QObject(parent)
+HttpServer::HttpServer(int port, QString document_root)
 {
-    if (!server.listen(QHostAddress::Any, 8001)) {
-        qDebug() <<  "Server failed to start\n";
+    if (!server.listen(QHostAddress::Any, port)) {
+        qDebug() <<  "Server failed to start on port" << port;
         exit(1);
     }
-    logic.setRoot(DOCUMENT_ROOT);
+    logic.setRoot(document_root);
     connect(&server, SIGNAL(newConnection()), this, SLOT(onNewConnection()));
 }
 

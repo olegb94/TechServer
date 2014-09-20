@@ -19,8 +19,9 @@ private:
     QThread *thread;
 signals:
     void newClient(QTcpSocket *client);
-public slots:
+private slots:
     void onNewClient(QTcpSocket *client);
+    void onHttpClientDisconnected(HttpClient *httpClient);
 };
 
 #endif // HTTPSERVERWORKER_H

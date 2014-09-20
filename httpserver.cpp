@@ -51,6 +51,11 @@ void HttpServer::onNewConnection() {
 
     if (!worker) {
         std::cout << "Availiable worker not found" << std::endl;
+
+        client->close();
+        client->deleteLater();
+
+        return;
     }
 
     client->setParent(NULL);

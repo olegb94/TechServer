@@ -15,10 +15,12 @@ private:
     QTcpSocket  *socket;
     Message     *message;
     ServerLogic *logic;
-    virtual     ~HttpClient();
+
 public:
-    explicit    HttpClient(QTcpSocket *socket, ServerLogic *logic, QObject *parent = 0);
+    HttpClient(QTcpSocket *socket, ServerLogic *logic);
+    ~HttpClient();
 signals:
+    void    disconnected(HttpClient *httpClient);
 public slots:
     void    onBytesWritten();
     void    onReadyRead();

@@ -1,7 +1,7 @@
 #include "serverlogic.h"
 
 
-ServerLogic::ServerLogic(QString root): cacheControl(root), root(root)
+ServerLogic::ServerLogic(QString root):  root(root), cacheControl(root)
 {
 
 }
@@ -13,13 +13,12 @@ Message *ServerLogic::handleRequest(QByteArray *req)
     request.open(QIODevice::ReadOnly);
     QByteArray startingLine = request.readLine();
     QList<QByteArray> parts = startingLine.split(' ');
-    QByteArray &method = parts[0];
-    QByteArray &uri = parts[1];
+    QByteArray &method = parts[0];    
+    QUrl qUrl(parts[1]);
     //QByteArray &httpv = parts[2];
     if (method == "GET") {
-        uri = uri.split('?')[0];
-        QString struri(uri);
-        QIODevice *mesBody = cacheControl.getFile(struri);
+        QString uri = qUrl.toString().split('?')[0];
+        QIODevice *mesBody = cacheControl.getFile(uri);
         if (mesBody == 0) {
              return formNotFoundMessage();
         }

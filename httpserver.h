@@ -15,10 +15,12 @@ class HttpServer: public QObject
 {
     Q_OBJECT
 private:
+    QThread *thread;
     QTcpServer server;
     ServerLogic logic;
     QList<HttpServerWorker*> workers;
     void initWorkers();
+    HttpServerWorker *getWorkerForClient();
 public slots:
     void onNewConnection();
 public:

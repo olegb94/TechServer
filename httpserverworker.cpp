@@ -30,5 +30,16 @@ void HttpServerWorker::onNewClient(QTcpSocket *client)
 
     HttpClient *httpClient = new HttpClient(client, logic);
 
+    connect(httpClient, SIGNAL(disconnected(HttpClient*)), this, SLOT(onHttpClientDisconnected(HttpClient*)));
+
     clients.append(httpClient);
+}
+
+void HttpServerWorker::onHttpClientDisconnected(HttpClient *httpClient)
+{
+    disconnect(httpClient, SIGNAL(disconnected(HttpClient*)), this, SLOT(onHttpClientDisconnected(HttpClient*)));
+
+    clients.removeAll(httpClient);
+
+    httpClient->deleteLater();
 }

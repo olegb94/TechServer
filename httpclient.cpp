@@ -1,7 +1,7 @@
 #include "httpclient.h"
 
-HttpClient::HttpClient(QTcpSocket *socket, ServerLogic *logic, QObject *parent) :
-    QObject(parent), socket(socket), logic(logic)
+HttpClient::HttpClient(QTcpSocket *socket, ServerLogic *logic) :
+    socket(socket), logic(logic), message(NULL)
 {
     qRegisterMetaType<QAbstractSocket::SocketError>();
 
@@ -13,9 +13,15 @@ HttpClient::HttpClient(QTcpSocket *socket, ServerLogic *logic, QObject *parent) 
 
 HttpClient::~HttpClient()
 {
-    delete socket;
-    delete message;
-    qDebug() << "Socket killed\n";
+    if (socket) {
+        delete socket;
+    }
+
+    if (message) {
+        delete message;
+    }
+
+    qDebug() << "Socket killed";
 }
 
 void HttpClient::onBytesWritten()
@@ -33,11 +39,17 @@ void HttpClient::onReadyRead()
 {
     QByteArray *request = new QByteArray();
     QBuffer buffer(request);
+
     buffer.open(QIODevice::ReadWrite);
+
     while (socket->isReadable() && !socket->atEnd()) {
        buffer.write(socket->readAll());
     }
+
     message = logic->handleRequest(request);
+
+    delete request;
+
     onBytesWritten();
 }
 
@@ -49,4 +61,6 @@ void HttpClient::onError(QAbstractSocket::SocketError error)
 void HttpClient::onDisconnected()
 {
     qDebug() << "Client Disconnected";
+
+    emit disconnected(this);
 }

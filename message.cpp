@@ -114,7 +114,7 @@ bool Message::setBody(QIODevice *body)
     return true;
 }
 
-bool Message::setBodyString(QByteArray *strbody)
+bool Message::setBody(QByteArray *strbody)
 {
     if (messageFormed) return false;
     this->strbody = strbody;

@@ -39,7 +39,7 @@ Message *ServerLogic::formNotFoundMessage() {
     response->setCode(404);
     response->setContentLength(13);
     response->setContentType("text/plain");
-    response->setBodyString(new QByteArray("404 Not Found"));
+    response->setBody(new QByteArray("404 Not Found"));
     response->setConnection(false);
     return response;
 }
@@ -49,7 +49,7 @@ Message *ServerLogic::formBadRequestMessage() {
     response->setCode(400);
     response->setContentLength(15);
     response->setContentType("text/plain");
-    response->setBodyString(new QByteArray("400 Bad Request"));
+    response->setBody(new QByteArray("400 Bad Request"));
     response->setConnection(false);
     return response;
 }

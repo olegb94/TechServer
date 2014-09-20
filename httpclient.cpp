@@ -3,9 +3,11 @@
 HttpClient::HttpClient(QTcpSocket *socket, ServerLogic *logic, QObject *parent) :
     QObject(parent), socket(socket), logic(logic)
 {
+    qRegisterMetaType<QAbstractSocket::SocketError>();
+
     connect(socket, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
     connect(socket, SIGNAL(bytesWritten(qint64)), this, SLOT(onBytesWritten()));
-    connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(onError()));
+    connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(onError(QAbstractSocket::SocketError)));
     connect(socket, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
 }
 
@@ -41,9 +43,9 @@ void HttpClient::onReadyRead()
     onBytesWritten();
 }
 
-void HttpClient::onError()
+void HttpClient::onError(QAbstractSocket::SocketError error)
 {
-    qDebug() << "Error";
+    qDebug() << "Error" << error;
 }
 
 void HttpClient::onDisconnected()

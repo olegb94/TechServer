@@ -22,7 +22,7 @@ signals:
 public slots:
     void    onBytesWritten();
     void    onReadyRead();
-    void    onError();
+    void    onError(QAbstractSocket::SocketError error);
     void    onDisconnected();
 };
 

@@ -7,6 +7,8 @@ HttpServer::HttpServer(int port, QString document_root)
         exit(1);
     }
 
+    qsrand(QTime::currentTime().msec());
+
     logic.setRoot(document_root);
 
     initWorkers();
@@ -21,10 +23,23 @@ void HttpServer::initWorkers()
         HttpServerWorker *worker = new HttpServerWorker(&logic);
 
         thread->start();
+
+        worker->setThread(thread);
         worker->moveToThread(thread);
 
         workers.append(worker);
     }
+}
+
+HttpServerWorker *HttpServer::getWorkerForClient()
+{
+    if (!workers.count()) {
+        return NULL;
+    }
+
+    int workerIndex = qrand() % workers.count();
+
+    return workers.at(workerIndex);
 }
 
 void HttpServer::onNewConnection() {
@@ -32,7 +47,14 @@ void HttpServer::onNewConnection() {
         return;
 
     QTcpSocket *client = server.nextPendingConnection();
+    HttpServerWorker *worker = getWorkerForClient();
 
-    workers.first()->serveClient(client);
-    //HttpClient *httpClient = new HttpClient(client, &logic);
+    if (!worker) {
+        std::cout << "Availiable worker not found" << std::endl;
+    }
+
+    client->setParent(NULL);
+    client->moveToThread(worker->getThread());
+
+    worker->serveClient(client);
 }

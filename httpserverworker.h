@@ -15,6 +15,7 @@ protected:
     void run();
 private:
     ServerLogic *logic;
+    QList<QTcpSocket*> newClients;
     QList<QTcpSocket*> clients;
 signals:
     void newClient(QTcpSocket *client);

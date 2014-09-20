@@ -15,13 +15,13 @@ void HttpServerWorker::run()
     connect(this, SIGNAL(newClient(QTcpSocket*)), this, SLOT(onNewClient(QTcpSocket*)));
 
     while (true) {
-        if (clients.count() > 0) {
-            QTcpSocket *client = clients.takeFirst();
+        while (clients.count()) {
+            QTcpSocket *client = newClients.takeFirst();
 
             if (client) {
-                ServerLogic *logic = new ServerLogic();
-                logic->setRoot("/Users/f1nal/");
                 HttpClient *httpClient = new HttpClient(client, logic);
+
+                clients.append(client);
             }
         }
 
@@ -31,5 +31,5 @@ void HttpServerWorker::run()
 
 void HttpServerWorker::onNewClient(QTcpSocket *client)
 {
-    clients.append(client);
+    newClients.append(client);
 }

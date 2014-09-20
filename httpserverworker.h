@@ -11,9 +11,12 @@ class HttpServerWorker : public QObject
 public:
     HttpServerWorker(ServerLogic *logic);
     void serveClient(QTcpSocket *client);
+    void setThread(QThread *thread);
+    QThread *getThread();
 private:
     ServerLogic *logic;
     QList<HttpClient*> clients;
+    QThread *thread;
 signals:
     void newClient(QTcpSocket *client);
 public slots:

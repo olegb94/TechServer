@@ -12,6 +12,16 @@ void HttpServerWorker::serveClient(QTcpSocket *client)
     emit newClient(client);
 }
 
+void HttpServerWorker::setThread(QThread *thread)
+{
+    this->thread = thread;
+}
+
+QThread *HttpServerWorker::getThread()
+{
+    return thread;
+}
+
 void HttpServerWorker::onNewClient(QTcpSocket *client)
 {
     if (!client) {

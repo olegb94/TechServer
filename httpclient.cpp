@@ -24,10 +24,8 @@ void HttpClient::onBytesWritten()
         QByteArray a = message->getNextBlock(100);
         //qDebug() << a;
         socket->write(a);
-
     } else {
         socket->close();
-        deleteLater();
     }
 }
 
@@ -50,5 +48,5 @@ void HttpClient::onError(QAbstractSocket::SocketError error)
 
 void HttpClient::onDisconnected()
 {
-
+    qDebug() << "Client Disconnected";
 }

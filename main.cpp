@@ -17,6 +17,9 @@ void parseCommandLineArguments(QCoreApplication &a, int &port, QString &document
 
     port = (parser.isSet(portOption)) ? parser.value(portOption).toInt() : 80;
     documentRoot = (parser.isSet(documentRootOption)) ? parser.value(documentRootOption) : "";
+    if (documentRoot.right(1) != "/") {
+        documentRoot.push_back("/");
+    }
 }
 
 int main(int argc, char *argv[])

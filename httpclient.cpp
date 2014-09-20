@@ -1,14 +1,20 @@
 #include "httpclient.h"
 
 HttpClient::HttpClient(QTcpSocket *socket, ServerLogic *logic) :
-    socket(socket), logic(logic), message(NULL)
+    socket(socket), logic(logic), message(NULL), readStarted(false)
 {
     qRegisterMetaType<QAbstractSocket::SocketError>();
+
+    qint64 bytes = socket->bytesAvailable();
 
     connect(socket, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
     connect(socket, SIGNAL(bytesWritten(qint64)), this, SLOT(onBytesWritten()));
     connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(onError(QAbstractSocket::SocketError)));
     connect(socket, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
+
+    if (bytes && !readStarted) {
+        emit socket->readyRead();
+    }
 }
 
 HttpClient::~HttpClient()
@@ -37,6 +43,8 @@ void HttpClient::onBytesWritten()
 
 void HttpClient::onReadyRead()
 {
+    readStarted = true;
+
     QByteArray *request = new QByteArray();
     QBuffer buffer(request);
 

@@ -7,6 +7,7 @@
 #include <QFile>
 #include <QBuffer>
 #include <QDebug>
+#include <QUrl>
 #include "message.h"
 
 class ServerLogic

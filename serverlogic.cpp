@@ -11,11 +11,11 @@ Message *ServerLogic::handleRequest(QByteArray *req)
     request.open(QIODevice::ReadOnly);
     QByteArray startingLine = request.readLine();
     QList<QByteArray> parts = startingLine.split(' ');
-    QByteArray &method = parts[0];
-    QByteArray &uri = parts[1];
+    QByteArray &method = parts[0];    
+    QUrl qUrl(parts[1]);
     //QByteArray &httpv = parts[2];
     if (method == "GET") {
-        uri = uri.split('?')[0];
+        QString uri = qUrl.toString().split('?')[0];
         QByteArray *mesBody = getFileFromCache(uri);
         if (mesBody == 0) {
             mesBody = cacheFile(uri);

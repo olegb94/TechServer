@@ -3,7 +3,7 @@
 HttpServer::HttpServer(int port, QString document_root)
 {
     if (!server.listen(QHostAddress::Any, port)) {
-        qDebug() <<  "Server failed to start on port" << port;
+        std::cout << "Server failed to start on port " << port << std::endl;
         exit(1);
     }
 
@@ -17,9 +17,12 @@ HttpServer::HttpServer(int port, QString document_root)
 void HttpServer::initWorkers()
 {
     for (int i = 0; i < QThread::idealThreadCount(); ++i) {
+        QThread *thread = new QThread();
         HttpServerWorker *worker = new HttpServerWorker(&logic);
 
-        worker->start();
+        thread->start();
+        worker->moveToThread(thread);
+
         workers.append(worker);
     }
 }
@@ -30,6 +33,6 @@ void HttpServer::onNewConnection() {
 
     QTcpSocket *client = server.nextPendingConnection();
 
-    //workers.first()->serveClient(client);
-    HttpClient *httpClient = new HttpClient(client, &logic);
+    workers.first()->serveClient(client);
+    //HttpClient *httpClient = new HttpClient(client, &logic);
 }

@@ -5,6 +5,8 @@
 #include <QTcpSocket>
 #include <QHostAddress>
 #include <QCoreApplication>
+#include <QThread>
+#include <iostream>
 #include "httpserverworker.h"
 #include "serverlogic.h"
 #include "httpclient.h"

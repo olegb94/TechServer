@@ -5,18 +5,15 @@
 #include <QThread>
 #include "httpclient.h"
 
-class HttpServerWorker : public QThread
+class HttpServerWorker : public QObject
 {
     Q_OBJECT
 public:
     HttpServerWorker(ServerLogic *logic);
     void serveClient(QTcpSocket *client);
-protected:
-    void run();
 private:
     ServerLogic *logic;
-    QList<QTcpSocket*> newClients;
-    QList<QTcpSocket*> clients;
+    QList<HttpClient*> clients;
 signals:
     void newClient(QTcpSocket *client);
 public slots:

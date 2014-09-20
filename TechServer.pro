@@ -34,3 +34,7 @@ HEADERS += \
 
 OTHER_FILES += \
     test.html
+
+exists("TechServer.local.pro") {
+    include("TechServer.local.pro")
+}

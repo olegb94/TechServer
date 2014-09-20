@@ -39,6 +39,8 @@ HttpServerWorker *HttpServer::getWorkerForClient()
 
     int workerIndex = qrand() % workers.count();
 
+    qDebug() << "Serving incoming client with worker" << (workerIndex + 1);
+
     return workers.at(workerIndex);
 }
 

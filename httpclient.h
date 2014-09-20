@@ -12,18 +12,18 @@ class HttpClient : public QObject
 {
     Q_OBJECT
 private:
-    QTcpSocket *socket;
-    Message *message;
+    QTcpSocket  *socket;
+    Message     *message;
     ServerLogic *logic;
-    virtual ~HttpClient();
+    virtual     ~HttpClient();
 public:
-    explicit HttpClient(QTcpSocket *socket, ServerLogic *logic, QObject *parent = 0);
+    explicit    HttpClient(QTcpSocket *socket, ServerLogic *logic, QObject *parent = 0);
 signals:
 public slots:
-    void onBytesWritten();
-    void onReadyRead();
-    void onError();
-    void onDisconnected();
+    void    onBytesWritten();
+    void    onReadyRead();
+    void    onError();
+    void    onDisconnected();
 };
 
 #endif // CONNECTION_H

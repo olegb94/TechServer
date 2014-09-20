@@ -13,15 +13,16 @@ HttpClient::~HttpClient()
 {
     delete socket;
     delete message;
-    //qDebug() << "Socket killed\n";
+    qDebug() << "Socket killed\n";
 }
 
 void HttpClient::onBytesWritten()
 {
     if (!message->endOfMessage()) {
         QByteArray a = message->getNextBlock(100);
-        socket->write(a);
         //qDebug() << a;
+        socket->write(a);
+
     } else {
         socket->close();
         deleteLater();
@@ -34,14 +35,10 @@ void HttpClient::onReadyRead()
     QBuffer buffer(request);
     buffer.open(QIODevice::ReadWrite);
     while (socket->isReadable() && !socket->atEnd()) {
-        //qDebug() << socket->readAll();
        buffer.write(socket->readAll());
     }
     message = logic->handleRequest(request);
-    if (!message->endOfMessage()) {
-        QByteArray a = message->getNextBlock(100);
-        socket->write(a);
-    }
+    onBytesWritten();
 }
 
 void HttpClient::onError()

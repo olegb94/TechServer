@@ -20,7 +20,7 @@ public:
     bool setServer(QString server);
     bool setConnection(bool keepAlive);
     bool setBody(QIODevice *body);      //use if you need want to transmit file or cached file
-    bool setBodyString(QByteArray *strbody);  //use if you need a strbody to be deleted after the message deleted
+    bool setBody(QByteArray *strbody);  //use if you need a strbody to be deleted after the message deleted
 
     void        formMessage();
     QByteArray  getNextBlock(quint32 size);

@@ -1,6 +1,4 @@
 #include "serverlogic.h"
-#include <QBuffer>
-#include <QDebug>
 
 ServerLogic::ServerLogic()
 {

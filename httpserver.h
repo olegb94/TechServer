@@ -4,8 +4,10 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QHostAddress>
-#include <httpserverworker.h>
-#include <serverlogic.h>
+#include <QCoreApplication>
+#include "httpserverworker.h"
+#include "serverlogic.h"
+#include "httpclient.h"
 
 class HttpServer: public QObject
 {

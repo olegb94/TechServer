@@ -1,6 +1,10 @@
 #ifndef MESSAGE_H
 #define MESSAGE_H
+
 #include <QDateTime>
+#include <stdlib.h>
+#include <Qt>
+#include <QDebug>
 
 class Message
 {

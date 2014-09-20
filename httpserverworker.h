@@ -3,7 +3,7 @@
 
 #include <QTcpSocket>
 #include <QThread>
-#include <httpclient.h>
+#include "httpclient.h"
 
 class HttpServerWorker : public QThread
 {

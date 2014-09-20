@@ -1,7 +1,4 @@
 #include "message.h"
-#include <stdlib.h>
-#include <Qt>
-#include <QDebug>
 
 Message::Message()
 {

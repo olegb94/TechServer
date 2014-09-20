@@ -1,10 +1,13 @@
 #ifndef SERVERLOGIC_H
 #define SERVERLOGIC_H
-#include "message.h"
+
 #include <QHash>
 #include <QByteArray>
 #include <QString>
 #include <QFile>
+#include <QBuffer>
+#include <QDebug>
+#include "message.h"
 
 class ServerLogic
 {

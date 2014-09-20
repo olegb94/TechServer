@@ -1,5 +1,4 @@
 #include "httpclient.h"
-#include <QBuffer>
 
 HttpClient::HttpClient(QTcpSocket *socket, ServerLogic *logic)
 {

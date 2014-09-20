@@ -2,11 +2,11 @@
 #define CONNECTION_H
 
 #include <QObject>
-#include <message.h>
 #include <QString>
 #include <QTcpSocket>
-#include <serverlogic.h>
-
+#include <QBuffer>
+#include "message.h"
+#include "serverlogic.h"
 
 class HttpClient : public QObject
 {

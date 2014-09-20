@@ -1,6 +1,4 @@
 #include "httpserver.h"
-#include "httpclient.h"
-#include <QCoreApplication>
 
 HttpServer::HttpServer(int port, QString document_root)
 {

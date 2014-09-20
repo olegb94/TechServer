@@ -11,13 +11,13 @@ class ServerLogic
 public:
     ServerLogic();
     Message *handleRequest(QByteArray *request);
-    void setRoot(QString root);
+    void    setRoot(QString root);
 private:
-    QHash<QString, QByteArray *> cashedFiles;
+    QHash<QString, QByteArray *> cachedFiles;
     QString root;
 
-    QByteArray *cashFile(QString path);
-    inline QByteArray *getFileFromCash(QString path);
+    QByteArray *cacheFile(QString path);
+    inline QByteArray *getFileFromCache(QString path);
     Message *formNotFoundMessage();
     Message *formBadRequestMessage();
 };

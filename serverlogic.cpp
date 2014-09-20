@@ -11,21 +11,25 @@ Message *ServerLogic::handleRequest(QByteArray *req)
 {
     QBuffer request(req);
     request.open(QIODevice::ReadOnly);
-    Message *response = new Message();
     QByteArray startingLine = request.readLine();
     QList<QByteArray> parts = startingLine.split(' ');
-    if (parts[0] == "GET") {
-        QByteArray *mesBody = getFileFromCash(parts[1]);
+    QByteArray &method = parts[0];
+    QByteArray &uri = parts[1];
+    //QByteArray &httpv = parts[2];
+    if (method == "GET") {
+        uri = uri.split('?')[0];
+        QByteArray *mesBody = getFileFromCache(uri);
         if (mesBody == 0) {
-            mesBody = cashFile(parts[1]);
+            mesBody = cacheFile(uri);
             if (mesBody == 0) {
                 return formNotFoundMessage();
             }
         }
+        Message *response = new Message();
         response->setCode(200);
         response->setContentLength(mesBody->length());
         response->setContentType("text/html");
-        response->setBody(mesBody);
+        response->setBody(new QBuffer(mesBody));
         response->setConnection(false);
         return response;
     }
@@ -35,9 +39,9 @@ Message *ServerLogic::handleRequest(QByteArray *req)
 Message *ServerLogic::formNotFoundMessage() {
     Message *response = new Message();
     response->setCode(404);
-    response->setContentLength(0);
-    response->setContentType("text/html");
-    response->setBody(0);
+    response->setContentLength(13);
+    response->setContentType("text/plain");
+    response->setBodyString(new QByteArray("404 Not Found"));
     response->setConnection(false);
     return response;
 }
@@ -45,9 +49,9 @@ Message *ServerLogic::formNotFoundMessage() {
 Message *ServerLogic::formBadRequestMessage() {
     Message *response = new Message();
     response->setCode(400);
-    response->setContentLength(0);
-    response->setContentType("text/html");
-    response->setBody(0);
+    response->setContentLength(15);
+    response->setContentType("text/plain");
+    response->setBodyString(new QByteArray("400 Bad Request"));
     response->setConnection(false);
     return response;
 }
@@ -57,20 +61,20 @@ void ServerLogic::setRoot(QString root)
     this->root = root;
 }
 
-QByteArray *ServerLogic::cashFile(QString path)
+QByteArray *ServerLogic::cacheFile(QString path)
 {
     QFile file(root+"."+path);
     //qDebug() << root+"."+path;
     if (!file.exists()) return 0;
     if (!file.open(QIODevice::ReadOnly)) return 0;
-    QByteArray *cash = new QByteArray();
-    *cash = file.readAll();
-    cashedFiles.insert(path, cash);
-    return cash;
+    QByteArray *cache = new QByteArray();
+    *cache = file.readAll();
+    cachedFiles.insert(path, cache);
+    return cache;
 }
 
-QByteArray *ServerLogic::getFileFromCash(QString path)
+QByteArray *ServerLogic::getFileFromCache(QString path)
 {
-    return cashedFiles.take(path);
+    return cachedFiles.take(path);
 }
 

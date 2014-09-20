@@ -11,11 +11,11 @@ Message *ServerLogic::handleRequest(QByteArray *req)
     request.open(QIODevice::ReadOnly);
     QByteArray startingLine = request.readLine();
     QList<QByteArray> parts = startingLine.split(' ');
-    QByteArray &method = parts[0];
-    QByteArray &uri = parts[1];
+    QByteArray &method = parts[0];    
+    QUrl qUrl(parts[1]);
     //QByteArray &httpv = parts[2];
     if (method == "GET") {
-        uri = uri.split('?')[0];
+        QString uri = qUrl.toString().split('?')[0];
         QByteArray *mesBody = getFileFromCache(uri);
         if (mesBody == 0) {
             mesBody = cacheFile(uri);
@@ -39,7 +39,7 @@ Message *ServerLogic::formNotFoundMessage() {
     response->setCode(404);
     response->setContentLength(13);
     response->setContentType("text/plain");
-    response->setBodyString(new QByteArray("404 Not Found"));
+    response->setBody(new QByteArray("404 Not Found"));
     response->setConnection(false);
     return response;
 }
@@ -49,7 +49,7 @@ Message *ServerLogic::formBadRequestMessage() {
     response->setCode(400);
     response->setContentLength(15);
     response->setContentType("text/plain");
-    response->setBodyString(new QByteArray("400 Bad Request"));
+    response->setBody(new QByteArray("400 Bad Request"));
     response->setConnection(false);
     return response;
 }

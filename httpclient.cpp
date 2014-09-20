@@ -1,6 +1,7 @@
 #include "httpclient.h"
 
-HttpClient::HttpClient(QTcpSocket *socket, ServerLogic *logic)
+HttpClient::HttpClient(QTcpSocket *socket, ServerLogic *logic, QObject *parent) :
+    QObject(parent), socket(socket), logic(logic)
 {
     connect(socket, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
     connect(socket, SIGNAL(bytesWritten(qint64)), this, SLOT(onBytesWritten()));
@@ -46,10 +47,9 @@ void HttpClient::onReadyRead()
 void HttpClient::onError()
 {
     qDebug() << "Error";
-    this->deleteLater();
 }
 
 void HttpClient::onDisconnected()
 {
-    this->deleteLater();
+
 }

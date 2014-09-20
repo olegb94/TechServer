@@ -2,7 +2,6 @@
 #define MESSAGE_H
 
 #include <QDateTime>
-#include <stdlib.h>
 #include <QDebug>
 #include <QBuffer>
 

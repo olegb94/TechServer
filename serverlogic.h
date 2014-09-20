@@ -8,19 +8,17 @@
 #include <QBuffer>
 #include <QDebug>
 #include "message.h"
+#include <cachecontrol.h>
 
 class ServerLogic
 {
 public:
-    ServerLogic();
+    ServerLogic(QString root);
     Message *handleRequest(QByteArray *request);
-    void    setRoot(QString root);
 private:
-    QHash<QString, QByteArray *> cachedFiles;
     QString root;
+    CacheControl cacheControl;
 
-    QByteArray *cacheFile(QString path);
-    inline QByteArray *getFileFromCache(QString path);
     Message *formNotFoundMessage();
     Message *formBadRequestMessage();
 };

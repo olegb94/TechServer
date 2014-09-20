@@ -1,13 +1,11 @@
 #include "httpserver.h"
 
-HttpServer::HttpServer(int port, QString document_root)
+HttpServer::HttpServer(int port, QString document_root): logic(document_root)
 {
     if (!server.listen(QHostAddress::Any, port)) {
         std::cout << "Server failed to start on port " << port << std::endl;
         exit(1);
     }
-
-    logic.setRoot(document_root);
 
     initWorkers();
 

@@ -23,14 +23,16 @@ SOURCES += main.cpp \
     httpclient.cpp \
     message.cpp \
     serverlogic.cpp \
-    httpserverworker.cpp
+    httpserverworker.cpp \
+    cachecontrol.cpp
 
 HEADERS += \
     httpserver.h \
     httpclient.h \
     message.h \
     serverlogic.h \
-    httpserverworker.h
+    httpserverworker.h \
+    cachecontrol.h
 
 OTHER_FILES += \
     test.html

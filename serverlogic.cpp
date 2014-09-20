@@ -1,9 +1,11 @@
 #include "serverlogic.h"
 
-ServerLogic::ServerLogic()
+
+ServerLogic::ServerLogic(QString root): cacheControl(root), root(root)
 {
-    root = "";
+
 }
+
 
 Message *ServerLogic::handleRequest(QByteArray *req)
 {
@@ -16,18 +18,16 @@ Message *ServerLogic::handleRequest(QByteArray *req)
     //QByteArray &httpv = parts[2];
     if (method == "GET") {
         uri = uri.split('?')[0];
-        QByteArray *mesBody = getFileFromCache(uri);
+        QString struri(uri);
+        QIODevice *mesBody = cacheControl.getFile(struri);
         if (mesBody == 0) {
-            mesBody = cacheFile(uri);
-            if (mesBody == 0) {
-                return formNotFoundMessage();
-            }
+             return formNotFoundMessage();
         }
         Message *response = new Message();
         response->setCode(200);
-        response->setContentLength(mesBody->length());
+        response->setContentLength(mesBody->size());
         response->setContentType("text/html");
-        response->setBody(new QBuffer(mesBody));
+        response->setBody(mesBody);
         response->setConnection(false);
         return response;
     }
@@ -52,27 +52,5 @@ Message *ServerLogic::formBadRequestMessage() {
     response->setBody(new QByteArray("400 Bad Request"));
     response->setConnection(false);
     return response;
-}
-
-void ServerLogic::setRoot(QString root)
-{
-    this->root = root;
-}
-
-QByteArray *ServerLogic::cacheFile(QString path)
-{
-    QFile file(root+"."+path);
-    //qDebug() << root+"."+path;
-    if (!file.exists()) return 0;
-    if (!file.open(QIODevice::ReadOnly)) return 0;
-    QByteArray *cache = new QByteArray();
-    *cache = file.readAll();
-    cachedFiles.insert(path, cache);
-    return cache;
-}
-
-QByteArray *ServerLogic::getFileFromCache(QString path)
-{
-    return cachedFiles.take(path);
 }
 

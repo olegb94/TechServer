@@ -1,8 +1,10 @@
 #ifndef TCPSERVER_H
 #define TCPSERVER_H
+
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QHostAddress>
+#include <httpserverworker.h>
 #include <serverlogic.h>
 
 class HttpServer: public QObject
@@ -11,6 +13,8 @@ class HttpServer: public QObject
 private:
     QTcpServer server;
     ServerLogic logic;
+    QList<HttpServerWorker*> workers;
+    void initWorkers();
 public slots:
     void onNewConnection();
 public:

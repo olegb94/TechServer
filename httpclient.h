@@ -17,7 +17,7 @@ private:
     ServerLogic *logic;
     virtual ~HttpClient();
 public:
-    explicit HttpClient(QTcpSocket *socket, ServerLogic *logic, QObject *parent = 0);
+    HttpClient(QTcpSocket *socket, ServerLogic *logic);
 signals:
 public slots:
     void onBytesWritten();

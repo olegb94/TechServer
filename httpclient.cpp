@@ -1,8 +1,7 @@
 #include "httpclient.h"
 #include <QBuffer>
 
-HttpClient::HttpClient(QTcpSocket *socket, ServerLogic *logic, QObject *parent) :
-    QObject(parent), socket(socket), logic(logic)
+HttpClient::HttpClient(QTcpSocket *socket, ServerLogic *logic)
 {
     connect(socket, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
     connect(socket, SIGNAL(bytesWritten(qint64)), this, SLOT(onBytesWritten()));

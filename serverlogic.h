@@ -22,6 +22,7 @@ private:
 
     Message *formNotFoundMessage();
     Message *formBadRequestMessage();
+    QString parseContentType(QString uri);
 };
 
 #endif // SERVERLOGIC_H

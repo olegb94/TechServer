@@ -32,3 +32,5 @@ Makefile*
 
 .DS_Store
 
+#dev
+/res

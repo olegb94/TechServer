@@ -13,11 +13,10 @@ Message *ServerLogic::handleRequest(QByteArray *req)
     request.open(QIODevice::ReadOnly);
     QByteArray startingLine = request.readLine();
     QList<QByteArray> parts = startingLine.split(' ');
-    QByteArray &method = parts[0];    
-    QUrl qUrl(parts[1]);
-    //QByteArray &httpv = parts[2];
+    QByteArray &method = parts[0];
+    QString  qUrl= QUrl::fromPercentEncoding(parts[1]);
     if (method == "GET") {
-        QString uri = qUrl.toString().split('?')[0];
+        QString uri = qUrl.split('?')[0];
         QIODevice *mesBody = cacheControl.getFile(uri);
         if (mesBody == 0) {
              return formNotFoundMessage();

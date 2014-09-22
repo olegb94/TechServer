@@ -67,6 +67,5 @@ void HttpClient::onError(QAbstractSocket::SocketError error)
 void HttpClient::onDisconnected()
 {
     qDebug() << "Client Disconnected";
-
     emit disconnected(this);
 }

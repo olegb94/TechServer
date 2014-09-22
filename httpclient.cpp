@@ -38,6 +38,7 @@ void HttpClient::onBytesWritten()
         socket->write(a);
     } else {
         socket->close();
+        socket->disconnectFromHost();
     }
 }
 

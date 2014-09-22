@@ -1,7 +1,7 @@
 #include "httpclient.h"
 
 HttpClient::HttpClient(QTcpSocket *socket, ServerLogic *logic) :
-    socket(socket), logic(logic), message(NULL), readStarted(false)
+    socket(socket), logic(logic), message(NULL)
 {
     qRegisterMetaType<QAbstractSocket::SocketError>();
 
@@ -12,7 +12,7 @@ HttpClient::HttpClient(QTcpSocket *socket, ServerLogic *logic) :
     connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(onError(QAbstractSocket::SocketError)));
     connect(socket, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
 
-    if (bytes && !readStarted) {
+    if (bytes) {
         emit socket->readyRead();
     }
 }
@@ -33,7 +33,7 @@ HttpClient::~HttpClient()
 void HttpClient::onBytesWritten()
 {
     if (!message->endOfMessage()) {
-        QByteArray a = message->getNextBlock(100);
+        QByteArray a = message->getNextBlock(1024);
         //qDebug() << a;
         socket->write(a);
     } else {
@@ -43,8 +43,6 @@ void HttpClient::onBytesWritten()
 
 void HttpClient::onReadyRead()
 {
-    readStarted = true;
-
     QByteArray *request = new QByteArray();
     QBuffer buffer(request);
 
@@ -63,7 +61,7 @@ void HttpClient::onReadyRead()
 
 void HttpClient::onError(QAbstractSocket::SocketError error)
 {
-    qDebug() << "Error" << error;
+    qDebug() << "Error: " << error;
 }
 
 void HttpClient::onDisconnected()

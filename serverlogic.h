@@ -22,12 +22,9 @@ private:
 
     Message *formNotFoundMessage();
     Message *formBadRequestMessage();
-<<<<<<< HEAD
-    QString parseContentType(QString *uri);
-=======
+
     QString parseContentType(QString uri);
     bool uriSecCheck(QString uri);
->>>>>>> 8af57f258ad8f7c93a5782fe1c58531423997919
 };
 
 #endif // SERVERLOGIC_H

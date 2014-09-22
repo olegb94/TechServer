@@ -14,7 +14,7 @@ Message *ServerLogic::handleRequest(QByteArray *req)
     QByteArray startingLine = request.readLine();
     QList<QByteArray> parts = startingLine.split(' ');
     QByteArray &method = parts[0];
-    QString  uri= QUrl::fromPercentEncoding(parts[1]);
+    QString  uri = QUrl::fromPercentEncoding(parts[1]);
     if (method == "GET") {
         uri = uri.split('?')[0];
         if (!uriSecCheck(uri)) return formBadRequestMessage();
@@ -25,7 +25,7 @@ Message *ServerLogic::handleRequest(QByteArray *req)
         Message *response = new Message();
         response->setCode(200);
         response->setContentLength(mesBody->size());
-        response->setContentType(parseContentType(&uri));
+        response->setContentType(parseContentType(uri));
         response->setBody(mesBody);
         response->setConnection(false);
         return response;
@@ -38,8 +38,7 @@ Message *ServerLogic::handleRequest(QByteArray *req)
         Message *response = new Message();
         response->setCode(200);
         response->setContentLength(0);
-        response->setContentType(parseContentType(&uri));
-        response->setBody(0);
+        response->setContentType(parseContentType(uri));
         response->setConnection(false);
         return response;
     }
@@ -68,12 +67,12 @@ Message *ServerLogic::formBadRequestMessage() {
     return response;
 }
 
-QString ServerLogic::parseContentType(QString *uri)
+QString ServerLogic::parseContentType(QString uri)
 {
     QString cType;
     QStringList cTypeToInt;
     cTypeToInt << "html"<< "css" << "js" << "jpg" << "jpeg" << "png" << "gif" << "swf" << "txt";
-    QString cTypeMarker = uri->split('.').last();
+    QString cTypeMarker = uri.split('.').last();
     if(cTypeMarker == "html") {
         cType = "text/html";
     }

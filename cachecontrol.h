@@ -18,6 +18,7 @@ private:
 public:
     CacheControl(QString root);
     QIODevice *getFile(QString &path);
+    bool isFileExists(QString &path);
 };
 
 #endif // CACHECONTROL_H

@@ -39,7 +39,7 @@ QIODevice *CacheControl::getFile(QString &path)
         if (cacheFile(path)) {
             strfile = getFileFromCache(path);
         } else {
-            QFile *file = new QFile(root+"."+path);
+            QFile *file = new QFile(root + "." + path);
             if (file->exists()) {
                 return file;
             } else {
@@ -49,4 +49,12 @@ QIODevice *CacheControl::getFile(QString &path)
         }
     }
     return new QBuffer(strfile);
+}
+
+bool CacheControl::isFileExists(QString &path)
+{
+    QFile *file = new QFile(root + "." + path);
+    bool isExist = file->exists();
+    delete file;
+    return isExist;
 }

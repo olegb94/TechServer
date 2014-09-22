@@ -15,7 +15,6 @@ private:
     QTcpSocket  *socket;
     Message     *message;
     ServerLogic *logic;
-    bool        readStarted;
 public:
     HttpClient(QTcpSocket *socket, ServerLogic *logic);
     ~HttpClient();

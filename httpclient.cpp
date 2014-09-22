@@ -37,7 +37,6 @@ void HttpClient::onBytesWritten()
         //qDebug() << a;
         socket->write(a);
     } else {
-        socket->close();
         socket->disconnectFromHost();
     }
 }

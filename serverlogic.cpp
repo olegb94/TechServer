@@ -26,11 +26,13 @@ Message *ServerLogic::handleRequest(QByteArray *req)
         response->setCode(200);
         response->setContentLength(mesBody->size());
         response->setContentType(parseContentType(uri));
-        if(method == "GET") { response->setBody(mesBody); }
+        if(method == "GET") {
+            response->setBody(mesBody);
+        }
         response->setConnection(false);
         return response;
     }
-    return formNotFoundMessage();
+    return formBadRequestMessage();
 }
 
 Message *ServerLogic::formNotFoundMessage() {

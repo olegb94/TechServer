@@ -15,7 +15,7 @@ Message *ServerLogic::handleRequest(QByteArray *req)
     QList<QByteArray> parts = startingLine.split(' ');
     QByteArray &method = parts[0];
     QString  uri = QUrl::fromPercentEncoding(parts[1]);
-    if (method == "GET") {
+    if (method == "GET" || method == "HEAD") {
         uri = uri.split('?')[0];
         if (!uriSecCheck(uri)) return formBadRequestMessage();
         QIODevice *mesBody = cacheControl.getFile(uri);
@@ -26,19 +26,7 @@ Message *ServerLogic::handleRequest(QByteArray *req)
         response->setCode(200);
         response->setContentLength(mesBody->size());
         response->setContentType(parseContentType(uri));
-        response->setBody(mesBody);
-        response->setConnection(false);
-        return response;
-    }
-    else if(method == "HEAD") {
-        uri = uri.split("?")[0];
-        if(!cacheControl.isFileExists(uri)) {
-            return formBadRequestMessage();
-        }
-        Message *response = new Message();
-        response->setCode(200);
-        response->setContentLength(0);
-        response->setContentType(parseContentType(uri));
+        if(method == "GET") { response->setBody(mesBody); }
         response->setConnection(false);
         return response;
     }

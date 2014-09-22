@@ -13,7 +13,7 @@ CacheControl::CacheControl(QString root)
 
 bool CacheControl::cacheFile(QString &path)
 {
-    QFile file(root+"."+path);
+    QFile file(root + "." + path);
     if (!file.exists()) return false;
     quint64 fsize = file.size();
     if (fsize > maxCachedFileSize || (fsize+totalCacheSize > maxTotalCacheSize))
@@ -50,12 +50,4 @@ QIODevice *CacheControl::getFile(QString &path)
         }
     }
     return new QBuffer(strfile);
-}
-
-bool CacheControl::isFileExists(QString &path)
-{
-    QFile *file = new QFile(root + "." + path);
-    bool isExist = file->exists();
-    delete file;
-    return isExist;
 }

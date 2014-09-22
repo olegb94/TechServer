@@ -11,6 +11,7 @@ Message::Message()
     messageFormed = false;
     end = false;
     strbody = 0;
+    body = 0;
     header = new QBuffer();
 }
 
@@ -32,7 +33,9 @@ QByteArray Message::getNextBlock(quint32 size)
             res.append(body->read(size - res.size()));
     }
     if(header->atEnd()) {
-        if (body->atEnd())
+        if (body == 0)
+            end = true;
+        else if (body->atEnd())
             end = true;
     }
     return res;

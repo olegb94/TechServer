@@ -15,7 +15,6 @@ class HttpServer: public QObject
 {
     Q_OBJECT
 private:
-    QThread *thread;
     int port;
     QTcpServer server;
     ServerLogic logic;
@@ -26,6 +25,8 @@ public slots:
     void onNewConnection();
 public:
     HttpServer(int port, QString document_root);
+    ~HttpServer();
+    bool start();
 };
 
 #endif // TCPSERVER_H

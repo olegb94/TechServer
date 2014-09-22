@@ -2,17 +2,26 @@
 
 HttpServer::HttpServer(int port, QString document_root): logic(document_root)
 {
-    if (!server.listen(QHostAddress::Any, port)) {
-        std::cout << "Server failed to start on port " << port << std::endl;
-        exit(1);
-    }
     this->port = port;
 
     qsrand(QTime::currentTime().msec());
 
+    connect(&server, SIGNAL(newConnection()), this, SLOT(onNewConnection()));
+}
+
+HttpServer::~HttpServer()
+{ }
+
+bool HttpServer::start()
+{
+    if (!server.listen(QHostAddress::Any, port)) {
+        std::cout << "Port " << port << " is already in use" << std::endl;
+        return false;
+    }
+
     initWorkers();
 
-    connect(&server, SIGNAL(newConnection()), this, SLOT(onNewConnection()));
+    return true;
 }
 
 void HttpServer::initWorkers()

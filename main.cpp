@@ -32,5 +32,9 @@ int main(int argc, char *argv[])
 
     HttpServer httpServer(port, documentRoot);
 
+    if (!httpServer.start()) {
+        std::cout << "Server start failed" << std::endl;
+    }
+
     return a.exec();
 }

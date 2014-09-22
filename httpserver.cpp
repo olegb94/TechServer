@@ -6,6 +6,7 @@ HttpServer::HttpServer(int port, QString document_root): logic(document_root)
         std::cout << "Server failed to start on port " << port << std::endl;
         exit(1);
     }
+    this->port = port;
 
     qsrand(QTime::currentTime().msec());
 

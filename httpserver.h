@@ -16,6 +16,7 @@ class HttpServer: public QObject
     Q_OBJECT
 private:
     QThread *thread;
+    int port;
     QTcpServer server;
     ServerLogic logic;
     QList<HttpServerWorker*> workers;

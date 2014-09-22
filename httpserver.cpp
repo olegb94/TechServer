@@ -15,7 +15,7 @@ HttpServer::~HttpServer()
 bool HttpServer::start()
 {
     if (!server.listen(QHostAddress::Any, port)) {
-        std::cout << "Port " << port << " is already in use" << std::endl;
+        std::cout << "Could not bind to port " << port << std::endl;
         return false;
     }
 

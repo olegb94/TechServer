@@ -6,7 +6,7 @@ CacheControl::CacheControl(QString root)
 {
     this->root = root;
     maxCachedFileSize = 100;
-    maxTotalCacheSize = 200;
+    maxTotalCacheSize = 20000;
     totalCacheSize = 0;
 }
 
@@ -22,6 +22,7 @@ bool CacheControl::cacheFile(QString &path)
         return false;
     QByteArray *cache = new QByteArray(file.readAll());
     cachedFiles.insert(path, cache);
+    totalCacheSize += fsize;
     return true;
 }
 

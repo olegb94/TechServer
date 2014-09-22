@@ -17,6 +17,7 @@ Message *ServerLogic::handleRequest(QByteArray *req)
     QString  uri= QUrl::fromPercentEncoding(parts[1]);
     if (method == "GET") {
         uri = uri.split('?')[0];
+        if (!uriSecCheck(uri)) return formBadRequestMessage();
         QIODevice *mesBody = cacheControl.getFile(uri);
         if (mesBody == 0) {
              return formNotFoundMessage();
@@ -102,5 +103,41 @@ QString ServerLogic::parseContentType(QString *uri)
     }
     else cType = "text/html";
     return cType;
+}
+
+bool ServerLogic::uriSecCheck(QString uri) {
+    if (uri[0] != '/')
+        return false;
+    // 0 - met nothing suspicious, 1 - met '/', 2 - met '/.', 3 - met '/..'
+    quint8 state = 1;
+    // >=0 - secure, <0 - unsecure
+    qint8 seclevel = 0;
+    quint32 size = uri.size();
+
+    for (quint32 i = 1; i < size; ++i) {
+        if (uri[i] == '/') {
+            switch (state) {
+            case 1: return false;
+            case 3: --seclevel;
+            }
+            state = 1;
+        } else
+            if (uri[i] == '.') {
+            switch (state) {
+            case 1: state = 2; break;
+            case 2: state = 3; break;
+            case 3: return false;
+            }
+        } else {
+            switch (state) {
+            case 1: ++seclevel; state = 0; break;
+            case 2: case 3: return false;
+            }
+        }
+
+        if (seclevel < 0)
+            return false;
+    }
+    return true;
 }
 

@@ -17,7 +17,8 @@ Message *ServerLogic::handleRequest(QByteArray *req)
     QString  uri = QUrl::fromPercentEncoding(parts[1]);
     if (method == "GET" || method == "HEAD") {
         uri = uri.split('?')[0];
-        if (!uriSecCheck(uri)) return formBadRequestMessage();
+        if (!uriSecCheck(uri))
+            return formBadRequestMessage();
         QIODevice *mesBody = cacheControl.getFile(uri);
         if (mesBody == 0) {
              return formNotFoundMessage();
@@ -28,6 +29,8 @@ Message *ServerLogic::handleRequest(QByteArray *req)
         response->setContentType(parseContentType(uri));
         if(method == "GET") {
             response->setBody(mesBody);
+        } else {
+            delete mesBody;
         }
         response->setConnection(false);
         return response;

@@ -24,10 +24,12 @@ private:
     Message *formOKMessage(QString contentType, bool keepAlive, QIODevice *mesBody, bool includeBody);
     Message *formNotFoundMessage(bool keepAlive);
     Message *formBadRequestMessage(bool keepAlive);
+    Message *formForbiddenMessage(bool keepAlive);
     void parseStartingLine(QByteArray &startingLine, QByteArray &method, QString &uri);
     void parseHeaders(QBuffer &request, QHash<QString, QString> &headers);
     QString parseContentType(QString uri);
     bool uriSecCheck(QString uri);
+    bool checkForIndex(QString &uri);
 };
 
 #endif // SERVERLOGIC_H

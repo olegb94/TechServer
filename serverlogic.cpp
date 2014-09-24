@@ -39,6 +39,10 @@ Message *ServerLogic::handleRequest(QByteArray *req, bool &socketKeepAlive)
         return formBadRequestMessage(socketKeepAlive);
     }
 
+    if(!checkForIndex(uri)) {
+        return formForbiddenMessage(socketKeepAlive);
+    }
+
     if (method != "GET" && method != "HEAD") {
         return formBadRequestMessage(socketKeepAlive);
     }
@@ -93,6 +97,20 @@ Message *ServerLogic::formBadRequestMessage(bool keepAlive) {
     QByteArray *body = new QByteArray("400 Bad Request");
 
     response->setCode(400);
+    response->setContentLength(body->length());
+    response->setContentType("text/plain");
+    response->setBody(body);
+    response->setKeepAlive(keepAlive);
+
+    return response;
+}
+
+Message *ServerLogic::formForbiddenMessage(bool keepAlive)
+{
+    Message *response = new Message();
+    QByteArray *body = new QByteArray("403 Forbidden directory");
+
+    response->setCode(403);
     response->setContentLength(body->length());
     response->setContentType("text/plain");
     response->setBody(body);
@@ -208,6 +226,16 @@ bool ServerLogic::uriSecCheck(QString uri) {
 
         if (seclevel < 0)
             return false;
+    }
+    return true;
+}
+
+bool ServerLogic::checkForIndex(QString &uri)
+{
+    if(uri.at(uri.length() - 1) == '/') {
+        if(!cacheControl->isFileExist(uri.append("index.html"))){
+            return false;
+        }
     }
     return true;
 }

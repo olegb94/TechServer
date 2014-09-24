@@ -58,3 +58,14 @@ QIODevice *CacheControl::getFile(QString &path)
     }
     return new QBuffer(strfile);
 }
+
+bool CacheControl::isFileExist(QString &path)
+{
+    if(!cachedFiles.contains(path)) {
+        QFile file(root + "." + path);
+        if (!file.exists()) {
+            return false;
+        }
+    }
+    return true;
+}

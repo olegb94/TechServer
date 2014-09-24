@@ -6,6 +6,7 @@
 #include <QHostAddress>
 #include <QCoreApplication>
 #include <QThread>
+#include <QSettings>
 #include <iostream>
 #include "httpserverworker.h"
 #include "serverlogic.h"
@@ -15,16 +16,16 @@ class HttpServer: public QObject
 {
     Q_OBJECT
 private:
-    int port;
+    QSettings *settings;
     QTcpServer server;
-    ServerLogic logic;
+    ServerLogic *logic;
     QList<HttpServerWorker*> workers;
     void initWorkers();
     HttpServerWorker *getWorkerForClient();
 public slots:
     void onNewConnection();
 public:
-    HttpServer(int port, QString document_root);
+    HttpServer(QSettings *settings);
     ~HttpServer();
     bool start();
 };

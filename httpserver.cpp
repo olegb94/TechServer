@@ -1,8 +1,11 @@
 #include "httpserver.h"
 
-HttpServer::HttpServer(int port, QString document_root): logic(document_root)
+HttpServer::HttpServer(QSettings *settings) : logic()
 {
-    this->port = port;
+    QString document_root = settings->value("server/document_root").toString();
+
+    this->settings = settings;
+    this->logic = new ServerLogic(document_root);
 
     qsrand(QTime::currentTime().msec());
 
@@ -10,10 +13,14 @@ HttpServer::HttpServer(int port, QString document_root): logic(document_root)
 }
 
 HttpServer::~HttpServer()
-{ }
+{
+    delete logic;
+}
 
 bool HttpServer::start()
 {
+    int port = this->settings->value("server/port").toInt();
+
     if (!server.listen(QHostAddress::Any, port)) {
         std::cout << "Could not bind to port " << port << std::endl;
         return false;
@@ -28,7 +35,7 @@ void HttpServer::initWorkers()
 {
     for (int i = 0; i < QThread::idealThreadCount(); ++i) {
         QThread *thread = new QThread();
-        HttpServerWorker *worker = new HttpServerWorker(&logic);
+        HttpServerWorker *worker = new HttpServerWorker(logic);
 
         thread->start();
 

@@ -3,6 +3,25 @@
 #include <httpserver.h>
 
 void parseCommandLineArguments(QCoreApplication &a, int &port, QString &documentRoot)
+QSettings *getSettings(QString &configPath)
+{
+    QSettings *settings = new QSettings(configPath, QSettings::IniFormat);
+
+    settings->beginGroup("server");
+
+    if (!settings->contains("port")) {
+        settings->setValue("port", 80);
+    }
+
+    if (!settings->contains("document_root")) {
+        settings->setValue("document_root", QCoreApplication::applicationDirPath().append('/'));
+    }
+
+    settings->endGroup();
+
+    return settings;
+}
+
 {
     QCommandLineParser parser;
     QCommandLineOption portOption(QStringList() << "p" << "port", "Set listening port to <port>", "port");
@@ -31,6 +50,7 @@ int main(int argc, char *argv[])
     parseCommandLineArguments(a, port, documentRoot);
 
     HttpServer httpServer(port, documentRoot);
+    QSettings *settings = getSettings(configPath);
 
     if (!httpServer.start()) {
         std::cout << "Server start failed" << std::endl;

@@ -14,7 +14,7 @@ QSettings *getSettings(QString &configPath)
     }
 
     if (!settings->contains("document_root")) {
-        settings->setValue("document_root", QCoreApplication::applicationDirPath().append('/'));
+        settings->setValue("document_root", QCoreApplication::applicationDirPath());
     }
 
     settings->endGroup();

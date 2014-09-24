@@ -37,7 +37,9 @@ void HttpClient::onBytesWritten()
         //qDebug() << a;
         socket->write(a);
     } else {
-        socket->disconnectFromHost();
+        if (!socketKeepAlive) {
+            socket->disconnectFromHost();
+        }
     }
 }
 
@@ -52,7 +54,7 @@ void HttpClient::onReadyRead()
        buffer.write(socket->readAll());
     }
 
-    message = logic->handleRequest(request);
+    message = logic->handleRequest(request, socketKeepAlive);
 
     delete request;
 

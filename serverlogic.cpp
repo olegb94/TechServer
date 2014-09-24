@@ -18,57 +18,125 @@ ServerLogic::~ServerLogic()
     delete cacheControl;
 }
 
-Message *ServerLogic::handleRequest(QByteArray *req)
+Message *ServerLogic::handleRequest(QByteArray *req, bool &socketKeepAlive)
 {
     QBuffer request(req);
+
     request.open(QIODevice::ReadOnly);
+
     QByteArray startingLine = request.readLine();
-    QList<QByteArray> parts = startingLine.split(' ');
-    QByteArray &method = parts[0];
-    QString  uri = QUrl::fromPercentEncoding(parts[1]);
-    if (method == "GET" || method == "HEAD") {
-        uri = uri.split('?')[0];
-        if (!uriSecCheck(uri))
-            return formBadRequestMessage();
-        QIODevice *mesBody = cacheControl->getFile(uri);
-        if (mesBody == 0) {
-             return formNotFoundMessage();
-        }
-        Message *response = new Message();
-        response->setCode(200);
-        response->setContentLength(mesBody->size());
-        response->setContentType(parseContentType(uri));
-        if(method == "GET") {
-            response->setBody(mesBody);
-        } else {
-            delete mesBody;
-        }
-        response->setConnection(false);
-        return response;
+
+    QByteArray method;
+    QString uri;
+    QHash<QString, QString> headers;
+
+    parseStartingLine(startingLine, method, uri);
+    parseHeaders(request, headers);
+
+    socketKeepAlive = (headers.contains("Connection") && headers.value("Connection") == "keep-alive");
+
+    if (!uriSecCheck(uri)) {
+        return formBadRequestMessage(socketKeepAlive);
     }
-    return formBadRequestMessage();
+
+    if (method != "GET" && method != "HEAD") {
+        return formBadRequestMessage(socketKeepAlive);
+    }
+
+    QIODevice *mesBody = cacheControl->getFile(uri);
+
+    if (mesBody == NULL) {
+         return formNotFoundMessage(socketKeepAlive);
+    }
+
+    bool includeBody = (method == "GET");
+    Message *message = formOKMessage(parseContentType(uri), socketKeepAlive, mesBody, includeBody);
+
+    if (!includeBody) {
+        delete mesBody;
+    }
+
+    return message;
 }
 
-Message *ServerLogic::formNotFoundMessage() {
+Message *ServerLogic::formOKMessage(QString contentType, bool keepAlive, QIODevice *mesBody, bool includeBody) {
+    Message *response = new Message();
+
+    response->setCode(200);
+    response->setContentLength(mesBody->size());
+    response->setContentType(contentType);
+
+    if (includeBody) {
+        response->setBody(mesBody);
+    }
+
+    response->setKeepAlive(keepAlive);
+
+    return response;
+}
+
+Message *ServerLogic::formNotFoundMessage(bool keepAlive) {
     Message *response = new Message();
     QByteArray *body = new QByteArray("404 Not Found");
+
     response->setCode(404);
     response->setContentLength(body->length());
     response->setContentType("text/plain");
     response->setBody(body);
-    response->setConnection(false);
+    response->setKeepAlive(keepAlive);
+
     return response;
 }
 
-Message *ServerLogic::formBadRequestMessage() {
+Message *ServerLogic::formBadRequestMessage(bool keepAlive) {
     Message *response = new Message();
     QByteArray *body = new QByteArray("400 Bad Request");
+
     response->setCode(400);
     response->setContentLength(body->length());
     response->setContentType("text/plain");
     response->setBody(body);
-    response->setConnection(false);
+    response->setKeepAlive(keepAlive);
+
     return response;
+}
+
+void ServerLogic::parseStartingLine(QByteArray &startingLine, QByteArray &method, QString &uri)
+{
+    QList<QByteArray> startingLineParts = startingLine.split(' ');
+
+    method = startingLineParts[0];
+
+    int uriQuestionMarkIndex = startingLineParts[1].indexOf('?');
+
+    QByteArray uriRaw = (uriQuestionMarkIndex != -1)
+            ? startingLineParts[1].left(uriQuestionMarkIndex)
+            : startingLineParts[1];
+
+    uri = QUrl::fromPercentEncoding(uriRaw);
+}
+
+void ServerLogic::parseHeaders(QBuffer &request, QHash<QString, QString> &headers)
+{
+    while (!request.atEnd()) {
+        QByteArray line = request.readLine();
+
+        int colonIndex = line.indexOf(':');
+
+        if (colonIndex == -1) {
+            continue;
+        }
+
+        QString headerName = line.left(colonIndex);
+
+        if (headerName != "Connection") {
+            continue;
+        }
+
+        QString headerValue = line.right(line.length() - colonIndex - 1).trimmed();
+
+        headers.insert(headerName, headerValue);
+    }
 }
 
 QString ServerLogic::parseContentType(QString uri)

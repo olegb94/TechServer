@@ -7,7 +7,7 @@ Message::Message()
     contentType = "text/html";
     contentLength = 0;
     server = "Vovach";
-    keepAlive = false;
+    keepAlive = true;
     messageFormed = false;
     end = false;
     strbody = 0;
@@ -103,7 +103,7 @@ bool Message::setServer(QString server)
     return true;
 }
 
-bool Message::setConnection(bool keepAlive)
+bool Message::setKeepAlive(bool keepAlive)
 {
     if (messageFormed) return false;
     this->keepAlive = keepAlive;

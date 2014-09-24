@@ -17,7 +17,7 @@ public:
     bool setContentType(QString contentType);
     bool setContentLength(quint32 length);
     bool setServer(QString server);
-    bool setConnection(bool keepAlive);
+    bool setKeepAlive(bool keepAlive);
     bool setBody(QIODevice *body);      //use if you need want to transmit file or cached file
     bool setBody(QByteArray *strbody);  //use if you need a strbody to be deleted after the message deleted
 

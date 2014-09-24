@@ -17,14 +17,15 @@ class ServerLogic
 public:
     ServerLogic(QSettings *settings);
     ~ServerLogic();
-    Message *handleRequest(QByteArray *request);
+    Message *handleRequest(QByteArray *request, bool &socketKeepAlive);
 private:
     QString root;
     CacheControl *cacheControl;
-
-    Message *formNotFoundMessage();
-    Message *formBadRequestMessage();
-
+    Message *formOKMessage(QString contentType, bool keepAlive, QIODevice *mesBody, bool includeBody);
+    Message *formNotFoundMessage(bool keepAlive);
+    Message *formBadRequestMessage(bool keepAlive);
+    void parseStartingLine(QByteArray &startingLine, QByteArray &method, QString &uri);
+    void parseHeaders(QBuffer &request, QHash<QString, QString> &headers);
     QString parseContentType(QString uri);
     bool uriSecCheck(QString uri);
 };

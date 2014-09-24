@@ -14,7 +14,19 @@ QSettings *getSettings(QString &configPath)
     }
 
     if (!settings->contains("document_root")) {
-        settings->setValue("document_root", QCoreApplication::applicationDirPath().append('/'));
+        settings->setValue("document_root", QCoreApplication::applicationDirPath());
+    }
+
+    settings->endGroup();
+
+    settings->beginGroup("cache");
+
+    if (!settings->contains("max_cached_file_size")) {
+        settings->setValue("max_cached_file_size", 100);
+    }
+
+    if (!settings->contains("max_total_cache_size")) {
+        settings->setValue("max_total_cache_size", 20000);
     }
 
     settings->endGroup();

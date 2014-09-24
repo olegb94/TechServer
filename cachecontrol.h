@@ -3,6 +3,7 @@
 
 #include <QHash>
 #include <QIODevice>
+#include <QSettings>
 
 class CacheControl
 {
@@ -16,7 +17,7 @@ private:
     bool cacheFile(QString &path);
     QByteArray *getFileFromCache(QString &path);
 public:
-    CacheControl(QString root);
+    CacheControl(QSettings *settings);
     QIODevice *getFile(QString &path);
 };
 

@@ -1,14 +1,16 @@
 #include "serverlogic.h"
 
 
-ServerLogic::ServerLogic(QString root)
+ServerLogic::ServerLogic(QSettings *settings)
 {
-    if (root.right(1) != "/") {
-        root.push_back("/");
+    QString document_root = settings->value("server/document_root").toString();
+
+    if (document_root.right(1) != "/") {
+        document_root.push_back("/");
     }
 
-    this->root = root;
-    this->cacheControl = new CacheControl(root);
+    this->root = document_root;
+    this->cacheControl = new CacheControl(settings);
 }
 
 ServerLogic::~ServerLogic()

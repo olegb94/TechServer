@@ -8,13 +8,14 @@
 #include <QBuffer>
 #include <QDebug>
 #include <QUrl>
+#include <QSettings>
 #include "message.h"
 #include <cachecontrol.h>
 
 class ServerLogic
 {
 public:
-    ServerLogic(QString root);
+    ServerLogic(QSettings *settings);
     ~ServerLogic();
     Message *handleRequest(QByteArray *request);
 private:

@@ -19,6 +19,18 @@ QSettings *getSettings(QString &configPath)
 
     settings->endGroup();
 
+    settings->beginGroup("cache");
+
+    if (!settings->contains("max_cached_file_size")) {
+        settings->setValue("max_cached_file_size", 100);
+    }
+
+    if (!settings->contains("max_total_cache_size")) {
+        settings->setValue("max_total_cache_size", 20000);
+    }
+
+    settings->endGroup();
+
     return settings;
 }
 

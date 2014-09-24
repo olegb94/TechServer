@@ -2,14 +2,21 @@
 #include <QFile>
 #include <QBuffer>
 
-CacheControl::CacheControl(QString root)
+CacheControl::CacheControl(QSettings *settings)
 {
-    this->root = root;
-    maxCachedFileSize = 100;
-    maxTotalCacheSize = 20000;
-    totalCacheSize = 0;
-}
+    QString document_root = settings->value("server/document_root").toString();
+    int maxCachedFileSize = settings->value("cache/max_cached_file_size").toInt();
+    int maxTotalCacheSize = settings->value("cache/max_total_cache_size").toInt();
 
+    if (document_root.right(1) != "/") {
+        document_root.push_back("/");
+    }
+
+    this->root = document_root;
+    this->maxCachedFileSize = maxCachedFileSize;
+    this->maxTotalCacheSize = maxTotalCacheSize;
+    this->totalCacheSize = 0;
+}
 
 bool CacheControl::cacheFile(QString &path)
 {

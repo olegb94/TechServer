@@ -2,10 +2,8 @@
 
 HttpServer::HttpServer(QSettings *settings) : logic()
 {
-    QString document_root = settings->value("server/document_root").toString();
-
     this->settings = settings;
-    this->logic = new ServerLogic(document_root);
+    this->logic = new ServerLogic(settings);
 
     qsrand(QTime::currentTime().msec());
 

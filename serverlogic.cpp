@@ -33,7 +33,7 @@ Message *ServerLogic::handleRequest(QByteArray *req, bool &socketKeepAlive)
     parseStartingLine(startingLine, method, uri);
     parseHeaders(request, headers);
 
-    socketKeepAlive = (headers.contains("Connection") && headers.value("Connection") == "keep-alive");
+    socketKeepAlive = (headers.contains("Connection") && headers.value("Connection").toLower() == "keep-alive");
 
     if (!uriSecCheck(uri)) {
         return formBadRequestMessage(socketKeepAlive);
@@ -46,7 +46,7 @@ Message *ServerLogic::handleRequest(QByteArray *req, bool &socketKeepAlive)
     QIODevice *mesBody = cacheControl->getFile(uri);
 
     if (mesBody == NULL) {
-         return formNotFoundMessage(socketKeepAlive);
+        return formNotFoundMessage(socketKeepAlive);
     }
 
     bool includeBody = (method == "GET");

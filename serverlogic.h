@@ -15,10 +15,11 @@ class ServerLogic
 {
 public:
     ServerLogic(QString root);
+    ~ServerLogic();
     Message *handleRequest(QByteArray *request);
 private:
     QString root;
-    CacheControl cacheControl;
+    CacheControl *cacheControl;
 
     Message *formNotFoundMessage();
     Message *formBadRequestMessage();

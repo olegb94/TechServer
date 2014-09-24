@@ -1,11 +1,20 @@
 #include "serverlogic.h"
 
 
-ServerLogic::ServerLogic(QString root):  root(root), cacheControl(root)
+ServerLogic::ServerLogic(QString root)
 {
+    if (root.right(1) != "/") {
+        root.push_back("/");
+    }
 
+    this->root = root;
+    this->cacheControl = new CacheControl(root);
 }
 
+ServerLogic::~ServerLogic()
+{
+    delete cacheControl;
+}
 
 Message *ServerLogic::handleRequest(QByteArray *req)
 {
@@ -19,7 +28,7 @@ Message *ServerLogic::handleRequest(QByteArray *req)
         uri = uri.split('?')[0];
         if (!uriSecCheck(uri))
             return formBadRequestMessage();
-        QIODevice *mesBody = cacheControl.getFile(uri);
+        QIODevice *mesBody = cacheControl->getFile(uri);
         if (mesBody == 0) {
              return formNotFoundMessage();
         }

@@ -50,7 +50,8 @@ void Message::formMessage()
     case 404: hs << "404 Not Found\r\n"; break;
     case 400: hs << "400 Bad Request\r\n"; break;
     case 403: hs << "403 Forbidden\r\n"; break;
-    case 200: default: hs << "200 OK\r\n";    
+    case 200: hs << "200 OK\r\n"; break;
+    default: hs << code << " \r\n";
     }
     hs << "Date: " << date.toString(Qt::RFC2822Date) << "\r\n";
     hs << "Server: " << server << "\r\n";
@@ -68,12 +69,9 @@ void Message::formMessage()
 
 bool Message::setCode(quint16 code)
 {
-    if (messageFormed) return false;
-    if (code == 200 || code == 400 || code == 404) {
-        this->code = code;
-        return true;
-    }
-    return false;
+    if (messageFormed) return false;   
+    this->code = code;
+    return true;
 }
 
 bool Message::setDate(QDateTime date)

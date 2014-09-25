@@ -165,8 +165,6 @@ void ServerLogic::parseHeaders(QBuffer &request, QHash<QString, QString> &header
 QString ServerLogic::parseContentType(QString uri)
 {
     QString cType;
-    QStringList cTypeToInt;
-    cTypeToInt << "html"<< "css" << "js" << "jpg" << "jpeg" << "png" << "gif" << "swf" << "txt";
     QString cTypeMarker = uri.split('.').last();
     if(cTypeMarker == "html") {
         cType = "text/html";
@@ -194,6 +192,9 @@ QString ServerLogic::parseContentType(QString uri)
     }
     else if(cTypeMarker == "txt") {
         cType = "text/html";
+    }
+    else if(cTypeMarker == "ico") {
+        cType = "image/vnd.microsoft.icon";
     }
     else cType = "text/html";
     return cType;

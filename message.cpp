@@ -49,7 +49,8 @@ void Message::formMessage()
     switch (code) {
     case 404: hs << "404 Not Found\r\n"; break;
     case 400: hs << "400 Bad Request\r\n"; break;
-    case 200: default: hs << "200 OK\r\n";
+    case 403: hs << "403 Forbidden"; break;
+    case 200: default: hs << "200 OK\r\n";    
     }
     hs << "Date: " << date.toString(Qt::RFC2822Date) << "\r\n";
     hs << "Server: " << server << "\r\n";

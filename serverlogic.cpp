@@ -230,8 +230,7 @@ bool ServerLogic::uriSecCheck(QString uri) {
     return true;
 }
 
-bool ServerLogic::checkForIndex(QString &uri)
-{
+bool ServerLogic::checkForIndex(QString &uri){
     if(uri.at(uri.length() - 1) == '/') {
         if(!cacheControl->isFileExist(uri.append("index.html"))){
             return false;

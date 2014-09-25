@@ -2,6 +2,7 @@
 #define CACHECONTROL_H
 
 #include <QHash>
+#include <QSet>
 #include <QIODevice>
 #include <QSettings>
 
@@ -14,12 +15,18 @@ private:
 
     QString root;
     QHash<QString, QByteArray *> cachedFiles;
+    QSet<QString> uncachableFiles;
+
     bool cacheFile(QString &path);
+    bool isFileAvailiableInCache(QString &path);
+    bool isFileAvailiableOnDisk(QString &path);
+    bool isFileUncacheable(QString &path);
+    void markFileAsUncacheable(QString &path);
     QByteArray *getFileFromCache(QString &path);
 public:
     CacheControl(QSettings *settings);
     QIODevice *getFile(QString &path);
-    bool isFileExist(QString &path);
+    bool isFileAvailiable(QString &path);
 };
 
 #endif // CACHECONTROL_H

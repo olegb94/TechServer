@@ -1,5 +1,6 @@
 #include "cachecontrol.h"
 #include <QFile>
+#include <QFileInfo>
 #include <QBuffer>
 
 CacheControl::CacheControl(QSettings *settings)
@@ -20,52 +21,79 @@ CacheControl::CacheControl(QSettings *settings)
 
 bool CacheControl::cacheFile(QString &path)
 {
-    QFile file(root + "." + path);
-    if (!file.exists()) return false;
-    quint64 fsize = file.size();
-    if (fsize > maxCachedFileSize || (fsize+totalCacheSize > maxTotalCacheSize))
+    if (isFileUncacheable(path))
         return false;
+
+    if (!isFileAvailiableOnDisk(path)) {
+        markFileAsUncacheable(path);
+        return false;
+    }
+
+    QFile file(root + "." + path);
+    quint64 fsize = file.size();
+
+    if (fsize > maxCachedFileSize || (fsize+totalCacheSize > maxTotalCacheSize)) {
+        markFileAsUncacheable(path);
+        return false;
+    }
     if (!file.open(QIODevice::ReadOnly))
         return false;
+
     QByteArray *cache = new QByteArray(file.readAll());
+
     cachedFiles.insert(path, cache);
     totalCacheSize += fsize;
     return true;
 }
-
 
 QByteArray *CacheControl::getFileFromCache(QString &path)
 {
     return cachedFiles.value(path);
 }
 
-
 QIODevice *CacheControl::getFile(QString &path)
 {
-    QByteArray *strfile = getFileFromCache(path);
-    if (strfile == 0) {
-        if (cacheFile(path)) {
-            strfile = getFileFromCache(path);
-        } else {
-            QFile *file = new QFile(root + "." + path);
-            if (file->exists()) {
-                return file;
-            } else {
-                delete file;
+
+    if (!isFileAvailiableInCache(path)) {
+        if (!cacheFile(path)) {
+
+            if (!isFileAvailiableOnDisk(path))
                 return 0;
-            }
+
+            return new QFile(root + "." + path);
+
         }
     }
-    return new QBuffer(strfile);
+    return new QBuffer(getFileFromCache(path));
 }
 
-bool CacheControl::isFileExist(QString &path)
-{
-    if(!cachedFiles.contains(path)) {
-        QFile file(root + "." + path);
-        if (!file.exists()) {
-            return false;
-        }
-    }
+bool CacheControl::isFileAvailiable(QString &path) {
+    if (isFileAvailiableInCache(path))
+        return true;
+
+    if (isFileAvailiableOnDisk(path))
+        return true;
+
+    return false;
+}
+
+bool CacheControl::isFileAvailiableInCache(QString &path) {
+    if (cachedFiles.contains(path))
+        return true;
+    return false;
+}
+
+bool CacheControl::isFileAvailiableOnDisk(QString &path) {
+    QFileInfo file(root + "." +path);
+    if (!file.exists() || file.isHidden() || file.isDir() || file.isSymLink() || !file.isReadable())
+        return false;
     return true;
+}
+
+bool CacheControl::isFileUncacheable(QString &path) {
+    return uncachableFiles.contains(path);
+}
+
+void CacheControl::markFileAsUncacheable(QString &path) {
+    uncachableFiles += path;
 }

@@ -17,6 +17,10 @@ QSettings *getSettings(QString &configPath)
         settings->setValue("document_root", QCoreApplication::applicationDirPath());
     }
 
+    if (!settings->contains("keep_alive_allowed")) {
+        settings->setValue("keep_alive_allowed", true);
+    }
+
     settings->endGroup();
 
     settings->beginGroup("cache");

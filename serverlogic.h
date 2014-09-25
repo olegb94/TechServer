@@ -21,6 +21,7 @@ public:
 private:
     QString root;
     CacheControl *cacheControl;
+    bool keepAliveAllowed;
     Message *formOKMessage(QString contentType, bool keepAlive, QIODevice *mesBody, bool includeBody);
     Message *formNotFoundMessage(bool keepAlive);
     Message *formBadRequestMessage(bool keepAlive);

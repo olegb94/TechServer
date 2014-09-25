@@ -9,8 +9,11 @@ ServerLogic::ServerLogic(QSettings *settings)
         document_root.push_back("/");
     }
 
+    bool keepAliveAllowed = settings->value("server/keep_alive_allowed").toBool();
+
     this->root = document_root;
     this->cacheControl = new CacheControl(settings);
+    this->keepAliveAllowed = keepAliveAllowed;
 }
 
 ServerLogic::~ServerLogic()
@@ -33,7 +36,9 @@ Message *ServerLogic::handleRequest(QByteArray *req, bool &socketKeepAlive)
     parseStartingLine(startingLine, method, uri);
     parseHeaders(request, headers);
 
-    socketKeepAlive = (headers.contains("Connection") && headers.value("Connection").toLower() == "keep-alive");
+    socketKeepAlive = (keepAliveAllowed
+                       && headers.contains("Connection")
+                       && headers.value("Connection").toLower() == "keep-alive");
 
     if (!uriSecCheck(uri)) {
         return formBadRequestMessage(socketKeepAlive);

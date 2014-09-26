@@ -35,6 +35,11 @@ void HttpServerWorker::onNewClient(QTcpSocket *client)
 
     HttpClient *httpClient = new HttpClient(client, logic);
 
+    if (keepAliveAllowed) {
+        httpClient->setKeepAlive(keepAliveAllowed);
+        httpClient->setKeepAliveTimeout(keepAliveTimeout);
+    }
+
     connect(httpClient, SIGNAL(disconnected(HttpClient*)), this, SLOT(onHttpClientDisconnected(HttpClient*)));
 
     clients.append(httpClient);

@@ -1,6 +1,6 @@
 #include "httpserver.h"
 
-HttpServer::HttpServer(QSettings *settings) : logic()
+HttpServer::HttpServer(QSettings *settings)
 {
     this->settings = settings;
     this->logic = new ServerLogic(settings);
@@ -33,7 +33,7 @@ void HttpServer::initWorkers()
 {
     for (int i = 0; i < QThread::idealThreadCount(); ++i) {
         QThread *thread = new QThread();
-        HttpServerWorker *worker = new HttpServerWorker(logic);
+        HttpServerWorker *worker = new HttpServerWorker(logic, settings);
 
         thread->start();
 

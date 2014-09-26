@@ -5,6 +5,7 @@
 #include <QString>
 #include <QTcpSocket>
 #include <QBuffer>
+#include <QTimer>
 #include "message.h"
 #include "serverlogic.h"
 
@@ -16,16 +17,21 @@ private:
     Message     *message;
     ServerLogic *logic;
     bool        socketKeepAlive;
+    QTimer      inativityTimer;
+    void        setClientActive();
 public:
     HttpClient(QTcpSocket *socket, ServerLogic *logic);
     ~HttpClient();
+    void setKeepAlive(bool keepAlive);
+    void setKeepAliveTimeout(int msec);
 signals:
     void    disconnected(HttpClient *httpClient);
-public slots:
+private slots:
     void    onBytesWritten();
     void    onReadyRead();
     void    onError(QAbstractSocket::SocketError error);
     void    onDisconnected();
+    void    onInativityTimerTimeout();
 };
 
 #endif // CONNECTION_H

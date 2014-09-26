@@ -1,8 +1,13 @@
 #include "httpserverworker.h"
 
-HttpServerWorker::HttpServerWorker(ServerLogic *logic)
+HttpServerWorker::HttpServerWorker(ServerLogic *logic, QSettings *settings)
 {
+    bool keepAliveAllowed = settings->value("server/keep_alive_allowed").toBool();
+    int keepAliveTimeout = settings->value("server/keep_alive_timeout").toInt();
+
     this->logic = logic;
+    this->keepAliveAllowed = keepAliveAllowed;
+    this->keepAliveTimeout = keepAliveTimeout;
 
     connect(this, SIGNAL(newClient(QTcpSocket*)), this, SLOT(onNewClient(QTcpSocket*)));
 }

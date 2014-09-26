@@ -21,6 +21,10 @@ QSettings *getSettings(QString &configPath)
         settings->setValue("keep_alive_allowed", true);
     }
 
+    if (!settings->contains("keep_alive_timeout")) {
+        settings->setValue("keep_alive_timeout", 5000);
+    }
+
     settings->endGroup();
 
     settings->beginGroup("cache");

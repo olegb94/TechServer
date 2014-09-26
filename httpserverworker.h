@@ -9,7 +9,7 @@ class HttpServerWorker : public QObject
 {
     Q_OBJECT
 public:
-    HttpServerWorker(ServerLogic *logic);
+    HttpServerWorker(ServerLogic *logic, QSettings *settings);
     void serveClient(QTcpSocket *client);
     void setThread(QThread *thread);
     QThread *getThread();
@@ -17,6 +17,8 @@ private:
     ServerLogic *logic;
     QList<HttpClient*> clients;
     QThread *thread;
+    bool keepAliveAllowed;
+    int keepAliveTimeout;
 signals:
     void newClient(QTcpSocket *client);
 private slots:

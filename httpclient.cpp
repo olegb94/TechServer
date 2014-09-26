@@ -62,6 +62,11 @@ void HttpClient::onBytesWritten()
 
         socket->write(a);
     } else {
+        if (message) {
+            delete message;
+            message = NULL;
+        }
+
         if (!socketKeepAlive) {
             socket->disconnectFromHost();
         }

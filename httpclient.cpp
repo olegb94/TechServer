@@ -86,6 +86,10 @@ void HttpClient::onReadyRead()
        buffer.write(socket->readAll());
     }
 
+    if (message) {
+        delete message;
+    }
+
     message = logic->handleRequest(request, socketKeepAlive);
 
     delete request;

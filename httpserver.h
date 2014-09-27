@@ -1,20 +1,33 @@
 #ifndef TCPSERVER_H
 #define TCPSERVER_H
+
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QHostAddress>
-#include <serverlogic.h>
+#include <QCoreApplication>
+#include <QThread>
+#include <QSettings>
+#include <iostream>
+#include "httpserverworker.h"
+#include "serverlogic.h"
+#include "httpclient.h"
 
 class HttpServer: public QObject
 {
     Q_OBJECT
 private:
+    QSettings *settings;
     QTcpServer server;
-    ServerLogic logic;
+    ServerLogic *logic;
+    QList<HttpServerWorker*> workers;
+    void initWorkers();
+    HttpServerWorker *getWorkerForClient();
 public slots:
     void onNewConnection();
 public:
-    explicit HttpServer(QObject *parent = 0);
+    HttpServer(QSettings *settings);
+    ~HttpServer();
+    bool start();
 };
 
 #endif // TCPSERVER_H

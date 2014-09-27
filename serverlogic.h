@@ -1,25 +1,36 @@
 #ifndef SERVERLOGIC_H
 #define SERVERLOGIC_H
-#include "message.h"
+
 #include <QHash>
 #include <QByteArray>
 #include <QString>
 #include <QFile>
+#include <QBuffer>
+#include <QDebug>
+#include <QUrl>
+#include <QSettings>
+#include "message.h"
+#include <cachecontrol.h>
 
 class ServerLogic
 {
 public:
-    ServerLogic();
-    Message *handleRequest(QByteArray *request);
-    void setRoot(QString root);
+    ServerLogic(QSettings *settings);
+    ~ServerLogic();
+    Message *handleRequest(QByteArray *request, bool &socketKeepAlive);
 private:
-    QHash<QString, QByteArray *> cashedFiles;
     QString root;
-
-    QByteArray *cashFile(QString path);
-    inline QByteArray *getFileFromCash(QString path);
-    Message *formNotFoundMessage();
-    Message *formBadRequestMessage();
+    CacheControl *cacheControl;
+    bool keepAliveAllowed;
+    Message *formOKMessage(QString contentType, bool keepAlive, QIODevice *mesBody, bool includeBody);
+    Message *formNotFoundMessage(bool keepAlive);
+    Message *formBadRequestMessage(bool keepAlive);
+    Message *formForbiddenMessage(bool keepAlive);
+    void parseStartingLine(QByteArray &startingLine, QByteArray &method, QString &uri);
+    void parseHeaders(QBuffer &request, QHash<QString, QString> &headers);
+    QString parseContentType(QString uri);
+    bool uriSecCheck(QString uri);
+    bool checkForIndex(QString &uri);
 };
 
 #endif // SERVERLOGIC_H

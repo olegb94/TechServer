@@ -1,79 +1,77 @@
 #include "message.h"
-#include <stdlib.h>
-#include <Qt>
-#include <QDebug>
 
 Message::Message()
 {
-    code = 200;
+    code = 400;
     date = QDateTime::currentDateTime();
     contentType = "text/html";
-    contentLength = 59;
+    contentLength = 0;
     server = "Vovach";
     keepAlive = true;
     messageFormed = false;
-    header = "HTTP/1.1 ";
-    pos = 0;
-    body = new QByteArray("<html><title>test</title><body><h1>Hello!<h1></body></html>");
+    end = false;
+    strbody = 0;
+    body = 0;
+    header = new QBuffer();
 }
 
 QByteArray Message::getNextBlock(quint32 size)
 {
     if (!messageFormed) {
         formMessage();
-        messageFormed = true;
     }
-    quint32 h_size = header.size();
-    QByteArray a;
-    if (h_size > pos+size+1) {
-        a = header.mid(pos, size);
-        pos += size;
-    } else if (body == 0) {
-        a = header.right(h_size-pos-1);
-        pos = -1;
+    if (end) return "";
+    QByteArray res;
+    if (header->atEnd()) {
+        if (body != 0)
+            res = body->read(size);
+        else
+            end = true;
     } else {
-        quint32 b_size = body->size();
-        if (h_size > pos) {
-            a = header.right(h_size-pos-1) + body->left(pos+size+1-h_size);
-            pos += size;
-        } else if (h_size + b_size > pos+size+1) {
-            a = body->mid(pos+1-h_size, size);
-            pos += size;
-        } else {
-            a = body->right(h_size+b_size-pos-1);
-            pos = -1;
-        }
+        res = header->read(size);
+        if (res.size() < size && body != 0)
+            res.append(body->read(size - res.size()));
     }
-    return a;
+    if(header->atEnd()) {
+        if (body == 0)
+            end = true;
+        else if (body->atEnd())
+            end = true;
+    }
+    return res;
 }
 
 void Message::formMessage()
 {
+    header->open(QIODevice::WriteOnly);
+    QTextStream hs(header);
+    hs << "HTTP/1.1 ";
     switch (code) {
-    case 404: header.append("404 Not Found\r\n"); break;
-    case 400: header.append("400 Bad Request\r\n"); break;
-    case 200: default: header.append("200 OK\r\n"); break;
+    case 404: hs << "404 Not Found\r\n"; break;
+    case 400: hs << "400 Bad Request\r\n"; break;
+    case 403: hs << "403 Forbidden\r\n"; break;
+    case 200: hs << "200 OK\r\n"; break;
+    default: hs << code << " \r\n";
     }
-    header.append("Date: ").append(date.toString(Qt::RFC2822Date)).append("\r\n");
-    header.append("Server: ").append(server).append("\r\n");
+    hs << "Date: " << date.toString(Qt::RFC2822Date) << "\r\n";
+    hs << "Server: " << server << "\r\n";
     if (!keepAlive)
-        header.append("Connection: close\r\n");
-    if (code == 200) {
-        header.append("Content-Length: ").append(QByteArray::number(contentLength)).append("\r\n");
-        header.append("Content-Type: ").append(contentType).append("\r\n");
-    }
-    header.append("\r\n");
-    //qDebug() << header;
+        hs << "Connection: close\r\n";
+    hs << "Content-Length: " << QByteArray::number(contentLength) << "\r\n";
+    hs << "Content-Type: " << contentType << "\r\n";
+    hs << "\r\n";
+    header->close();
+    messageFormed = true;
+    header->open(QIODevice::ReadOnly);
+    if (body != 0)
+        body->open(QIODevice::ReadOnly);
 }
 
 bool Message::setCode(quint16 code)
 {
-    if (messageFormed) return false;
-    if (code == 200 || code == 400 || code == 404) {
-        this->code = code;
-        return true;
-    }
-    return false;
+    if (messageFormed) return false;   
+    this->code = code;
+    return true;
 }
 
 bool Message::setDate(QDateTime date)
@@ -104,21 +102,36 @@ bool Message::setServer(QString server)
     return true;
 }
 
-bool Message::setConnection(bool keepAlive)
+bool Message::setKeepAlive(bool keepAlive)
 {
     if (messageFormed) return false;
     this->keepAlive = keepAlive;
     return true;
 }
 
-bool Message::setBody(QByteArray *body)
+bool Message::setBody(QIODevice *body)
 {
     if (messageFormed) return false;
     this->body = body;
     return true;
 }
 
+bool Message::setBody(QByteArray *strbody)
+{
+    if (messageFormed) return false;
+    this->strbody = strbody;
+    this->body = new QBuffer(strbody);
+    return true;
+}
+
 bool Message::endOfMessage()
 {
-    return (pos == -1) ? true : false;
+    return end;
+}
+
+Message::~Message()
+{
+    if (header) delete header;
+    if (body) delete body;
+    if (strbody) delete strbody;
 }

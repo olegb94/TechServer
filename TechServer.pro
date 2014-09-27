@@ -22,13 +22,21 @@ SOURCES += main.cpp \
     httpserver.cpp \
     httpclient.cpp \
     message.cpp \
-    serverlogic.cpp
+    serverlogic.cpp \
+    httpserverworker.cpp \
+    cachecontrol.cpp
 
 HEADERS += \
     httpserver.h \
     httpclient.h \
     message.h \
-    serverlogic.h
+    serverlogic.h \
+    httpserverworker.h \
+    cachecontrol.h
 
 OTHER_FILES += \
     test.html
+
+exists("TechServer.local.pro") {
+    include("TechServer.local.pro")
+}

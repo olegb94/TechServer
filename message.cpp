@@ -3,7 +3,7 @@
 Message::Message()
 {
     code = 400;
-    date = QDateTime::currentDateTime();
+    date = QDateTime::currentDateTimeUtc();
     contentType = "text/html";
     contentLength = 0;
     server = "Vovach";
@@ -44,22 +44,29 @@ QByteArray Message::getNextBlock(quint32 size)
 void Message::formMessage()
 {
     header->open(QIODevice::WriteOnly);
+
     QTextStream hs(header);
+
     hs << "HTTP/1.1 ";
+
     switch (code) {
-    case 404: hs << "404 Not Found\r\n"; break;
-    case 400: hs << "400 Bad Request\r\n"; break;
-    case 403: hs << "403 Forbidden\r\n"; break;
-    case 200: hs << "200 OK\r\n"; break;
-    default: hs << code << " \r\n";
+        case 404: hs << "404 Not Found\r\n"; break;
+        case 400: hs << "400 Bad Request\r\n"; break;
+        case 403: hs << "403 Forbidden\r\n"; break;
+        case 200: hs << "200 OK\r\n"; break;
+        default: hs << code << " \r\n";
     }
-    hs << "Date: " << date.toString(Qt::RFC2822Date) << "\r\n";
+
+    QString dateHeader = QString("%1 GMT").arg(date.toString("ddd, dd MMM yyyy HH:mm:ss")); //date.toString(/*"ddd, dd MMM yyyy HH:mm:ss "*/Qt::RFC2822Date);
+
+    hs << "Date: " << dateHeader << "\r\n";
     hs << "Server: " << server << "\r\n";
     if (!keepAlive)
         hs << "Connection: close\r\n";
     hs << "Content-Length: " << QByteArray::number(contentLength) << "\r\n";
     hs << "Content-Type: " << contentType << "\r\n";
     hs << "\r\n";
+
     header->close();
     messageFormed = true;
     header->open(QIODevice::ReadOnly);

@@ -19,6 +19,7 @@ private:
     QSettings *settings;
     QTcpServer server;
     ServerLogic *logic;
+    int workersCount;
     QList<HttpServerWorker*> workers;
     void initWorkers();
     HttpServerWorker *getWorkerForClient();

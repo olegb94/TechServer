@@ -2,8 +2,11 @@
 
 HttpServer::HttpServer(QSettings *settings)
 {
+    int workersCount = settings->value("server/workers").toInt();
+
     this->settings = settings;
     this->logic = new ServerLogic(settings);
+    this->workersCount = workersCount;
 
     qsrand(QTime::currentTime().msec());
 
@@ -31,7 +34,7 @@ bool HttpServer::start()
 
 void HttpServer::initWorkers()
 {
-    for (int i = 0; i < QThread::idealThreadCount(); ++i) {
+    for (int i = 0; i < workersCount; ++i) {
         QThread *thread = new QThread();
         HttpServerWorker *worker = new HttpServerWorker(logic, settings);
 

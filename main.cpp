@@ -25,6 +25,10 @@ QSettings *getSettings(QString &configPath)
         settings->setValue("keep_alive_timeout", 5000);
     }
 
+    if (!settings->contains("workers")) {
+        settings->setValue("workers", QThread::idealThreadCount());
+    }
+
     settings->endGroup();
 
     settings->beginGroup("cache");

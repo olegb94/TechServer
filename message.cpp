@@ -57,7 +57,7 @@ void Message::formMessage()
         default: hs << code << " \r\n";
     }
 
-    QString dateHeader = QString("%1 GMT").arg(date.toString("ddd, dd MMM yyyy HH:mm:ss")); //date.toString(/*"ddd, dd MMM yyyy HH:mm:ss "*/Qt::RFC2822Date);
+    QString dateHeader = QString("%1 GMT").arg(date.toString("ddd, dd MMM yyyy HH:mm:ss"));
 
     hs << "Date: " << dateHeader << "\r\n";
     hs << "Server: " << server << "\r\n";

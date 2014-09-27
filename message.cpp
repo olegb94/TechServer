@@ -63,6 +63,8 @@ void Message::formMessage()
     hs << "Server: " << server << "\r\n";
     if (!keepAlive)
         hs << "Connection: close\r\n";
+    else
+        hs << "Connection: keep-alive\r\n";
     hs << "Content-Length: " << QByteArray::number(contentLength) << "\r\n";
     hs << "Content-Type: " << contentType << "\r\n";
     hs << "\r\n";

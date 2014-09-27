@@ -165,7 +165,7 @@ void ServerLogic::parseHeaders(QBuffer &request, QHash<QString, QString> &header
 QString ServerLogic::parseContentType(QString uri)
 {
     QString cType;
-    QString cTypeMarker = uri.split('.').last();
+    QString cTypeMarker = uri.split('.').last().toLower();
     if(cTypeMarker == "html") {
         cType = "text/html";
     }

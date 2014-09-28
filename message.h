@@ -37,6 +37,7 @@ private:
     QBuffer     *header;
     QIODevice   *body;
     QByteArray  *strbody;
+    QLocale     locale;
 };
 
 

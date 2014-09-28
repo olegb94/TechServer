@@ -1,6 +1,6 @@
 #include "message.h"
 
-Message::Message()
+Message::Message() : locale(QLocale::English)
 {
     code = 400;
     date = QDateTime::currentDateTimeUtc();
@@ -57,7 +57,7 @@ void Message::formMessage()
         default: hs << code << " \r\n";
     }
 
-    QString dateHeader = QString("%1 GMT").arg(date.toString("ddd, dd MMM yyyy HH:mm:ss"));
+    QString dateHeader = locale.toString(date, "ddd, dd MMM yyyy hh:mm:ss") + " GMT";
 
     hs << "Date: " << dateHeader << "\r\n";
     hs << "Server: " << server << "\r\n";
